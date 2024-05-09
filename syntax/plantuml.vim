@@ -392,6 +392,35 @@ syntax case match
 " https://plantuml.com/ja/preprocessing
 syntax match plantumlBuiltinFunction /%\%(chr\|darken\|date\|dec2hex\|dirpath\|feature\|false\|file_exists\|filename\|function_exists\|get_variable_value\|getenv\|hex2dec\|hsl_color\|intval\|is_dark\|is_light\|lighten\|loadJSON\|lower\|newline\|not\|lighten\|reverse_color\|reverse_hsluv_color\|set_variable_value\|size\|string\|strlen\|strpos\|substr\|true\|upper\|variable_exists\|version\)/
 
+" Embeded stylesheets
+" A newer and concurrent styling mechanism aside from skinparameters
+"
+" Those can actually be usefull elsewere too
+syntax match plantumlBraces contained "[{}]"
+"
+syntax region plantumlCssStyle matchgroup=plantumlTag start=+<style>+ keepend end=+</style>+ contains=plantumlGraphObj,plantumlCssStereo,plantumlCssDefinition,plantumlTypeKeyword
+" Sterotypes act like css class names. Almost every character is authorized
+" provided the whole thing is in double quotes.
+" Highlighted as function
+syntax match plantumlCssStereo contained /\.-\=[A-Za-z_][A-Za-z0-9_-]*/
+syntax match plantumlCssStereo contained /"\.-\=[A-Za-z_][^.]*"/
+"contains=plantumlCssClassNameDot
+"syn match plantumlCssClassNameDot contained '\.'
+"
+" Diagram type, PlantUML logical or graphical element type act as css tag
+" names (should be highlighted as statement)
+syntax match plantumlGraphObj contained "\<legend\>"
+" UML diagram types (+archimate)
+syntax match plantumlGraphObj contained "\<\%(activity\|archimate\|class\|component\|deployment\|object\|sequence\|state\|timing\|usecase\)Diagram\>"
+" Non-UML diagram types
+syntax match plantumlGraphObj contained "\<\%(board\|bpm\|chronology\|creole\|cute\|def\|ditaa\|dot\|ebnf\|files\|flow\|gantt\|git\|hcl\|jcckit\|json\|latex\|math\|mindmap\|nwdiag\|project\|regex\|salt\|tree\|uml\|wbs\|wire\|yaml\)Diagram\>"
+
+" TODO: Dynamic selectors
+"       Nesting
+"
+syntax region plantumlCssDefinition transparent matchgroup=plantumlBraces start='{' keepend end='}' contains=plantumlSkinparamKeyword,plantumlColor,plantumlString,plantumlValueLineStyle fold
+syntax match plantumlValueLineStyle contained "\d\+\%(\.\d\+\)\?\%(-\d\+\%(\.\d\+\)\?\)"
+
 " Highlight
 highlight default link plantumlCommentTODO Todo
 highlight default link plantumlKeyword Keyword
@@ -432,6 +461,10 @@ highlight default link plantumlUsecaseActor String
 highlight default link plantumlStereotype Type
 highlight default link plantumlBuiltinFunction Function
 highlight default link plantumlGanttTask Type
+highlight default link plantumlBraces Function
+highlight default link plantumlCssStereo Function
+highlight default link plantumlGraphObj Statement
+highlight default link plantumlValueLineStyle Number
 
 let &cpoptions=s:cpo_orig
 unlet s:cpo_orig
